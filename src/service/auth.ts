@@ -24,4 +24,6 @@ export async function auth(code: string) {
   const userDetails = userResponse.data;
   console.log("User Details:", userDetails);
 
+  return userDetails;
+
 }
