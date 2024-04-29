@@ -11,6 +11,7 @@ const passport = require('passport');
 const userRouter = require('./routes/user.route');
 const authRouter = require('./routes/auth.route');
 const queueRouter = require('./routes/queue.route');
+const historyRouter = require('./routes/history.route');
 
 const port = parseInt(process.env.PORT!) || 7777 ;
 const app = express();
@@ -21,9 +22,11 @@ app.use(express.urlencoded({extended:true}));
 
 app.use(cookie());
 
-app.use("/users",jwtValidate,userRouter);
+// jwtValidate
+app.use("/users",userRouter);
 app.use("/login",authRouter);
 app.use("/queue",queueRouter);
+app.use("/history",historyRouter);
 
 app.listen(port,function () {
     console.log("Server is ready at ",port);
