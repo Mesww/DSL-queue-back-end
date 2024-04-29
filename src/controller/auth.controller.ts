@@ -70,10 +70,12 @@ export const googleauth = asynchandler(
       return res.status(200).json(token);
     }
 
+
     // ! if database hasn't current user
     switch (userDetails.hd) {
       case "lamduan.mfu.ac.th":
-        // ? --------------------------------- test login admin ---------------------------------
+        
+      // ? --------------------------------- test login admin ---------------------------------
 
         if (userDetails.email === "6431501102@lamduan.mfu.ac.th") {
           // !random studentid for admin
@@ -109,6 +111,47 @@ export const googleauth = asynchandler(
           return res.status(200).json(token);
 
           // ? --------------------------------- end test login admin ---------------------------------
+
+        }else if(userDetails.email === "6431501016@lamduan.mfu.ac.th"){
+
+          // ? --------------------------------- test regis admin ---------------------------------
+
+          // !random studentid for teacher
+          const studentid = await randomstudentid("0", userDetails.email);
+          console.log(studentid);
+
+          // ! create user
+          const { email, role } = await addUser({
+            studentid: studentid,
+            email: userDetails.email,
+            name: userDetails.name,
+            role: "TEACHER",
+            channel: 0,
+          });
+
+          // ! gen token
+          const token = await genToken({ email: email, role: role });
+
+          // ! send refresh token to database
+          const refresh_token_user = await editSpecificuser({
+            email: email,
+            data: { refresh: token.refresh_token },
+          });
+
+          if (refresh_token_user === null) {
+            return res.status(500).json({ message: "Database error" });
+          }
+
+          res.cookie("accesstoken", token.access_token, { HttpOnly: true });
+          res.cookie("refeshtoken", token.refresh_token, { HttpOnly: true });
+          
+          // ! send accesstoken && refreshtoken to client
+          return res.status(200).json(token);
+
+          
+          // ? --------------------------------- end test regis admin ---------------------------------
+          
+
         } else {
           // ! create user
           const { email, role } = await addUser({
