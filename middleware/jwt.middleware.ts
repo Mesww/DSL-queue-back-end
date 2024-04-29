@@ -8,6 +8,9 @@ export const jwtValidate = async (req:any,res:any , next:any) => {
     jwt.verify(token, process.env.ACCESS_SECRET!, (err:any,decoded:any)=> {
       if (err) {throw new Error(err)}
     });
+
+    
+
     next();
   } catch (error) {
   }
