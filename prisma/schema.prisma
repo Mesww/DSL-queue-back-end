@@ -16,10 +16,56 @@ model User {
   role      Role
   channel   Int
   refresh   String? @db.VarChar(1046)
+  queue     Queue[]
 }
 
 enum Role {
   STUDENT
   TEACHER
   ADMIN
+}
+
+model Queue {
+  queueid        Int      @id @default(autoincrement())
+  datetime  DateTime @default(now())
+  studentID   String      @unique
+  type      QueueType
+  orders     Int 
+  channel   Int
+  status    QueueStatus
+  rate      Int
+  comment   String
+  user User @relation(fields: [studentID],references: [studentid])
+}
+
+enum QueueType {
+  ONE
+  TWO
+  OTHER
+}
+
+enum Channel {
+  WAIT
+  ONE
+  TWO
+  THREE
+}
+
+enum QueueStatus {
+  WAIT
+  PROCESS
+  FINISH
+  SKIP
+  STOP
+}
+
+model History {
+  historyid        Int      @id @default(autoincrement())
+  datetime  DateTime @default(now())
+  studentid    String 
+  type      QueueType
+  orders     Int
+  channel   Int
+  rate      Int
+  comment   String
 }
