@@ -16,13 +16,7 @@ model User {
   role      Role
   channel   Int
   refresh   String? @db.VarChar(1046)
-  queue     Queue[]
-}
-
-enum Role {
-  STUDENT
-  TEACHER
-  ADMIN
+  queue Queue[]
 }
 
 model Queue {
@@ -38,12 +32,17 @@ model Queue {
   user User @relation(fields: [studentID],references: [studentid])
 }
 
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
 enum QueueType {
   ONE
   TWO
   OTHER
 }
-
 enum Channel {
   WAIT
   ONE
