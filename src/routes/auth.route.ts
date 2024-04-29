@@ -1,14 +1,18 @@
 import express from 'express';
 
-const authcontroller = require('../controller/auth.controller');
+import {googleauth,testrandomstudenid,refresh_token} from '../controller/auth.controller';
+import { jwtRefreshTokenValidate } from "../../middleware/jwtrefrech.middleware";
 
 
 const router = express.Router();
 
 // ! google auth
-router.post("/google",authcontroller.googleauth);
+router.post("/google",googleauth);
 
-router.get("/testrandomstudentid",authcontroller.testrandomstudenid);
+router.get("/testrandomstudentid",testrandomstudenid);
+
+router.post("/refresh",jwtRefreshTokenValidate,refresh_token);
+
 
 module.exports = router;
 

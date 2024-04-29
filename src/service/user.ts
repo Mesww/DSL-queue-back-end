@@ -11,11 +11,14 @@ export async function addUser(user: {
   channel: number;
   emailVerified?: boolean;
 }) {
-  await prisma.user.create({ data: user });
-  return "Add success";
+  const res = await prisma.user.create({ data: user });
+  return res;
 }
-export async function getSpecificuser(user:{email: string, studentid?: string}) {
-    console.log(user.studentid);
+export async function getSpecificuser(user: {
+  email: string;
+  studentid?: string;
+}) {
+  console.log(user.studentid);
   const res = await prisma.user.findUnique({
     where: {
       email: user.email,
@@ -23,4 +26,24 @@ export async function getSpecificuser(user:{email: string, studentid?: string}) 
     },
   });
   return res;
+}
+
+export async function editSpecificuser(user: {
+  email: string;
+  data: {
+    email?: string;
+    name?: string;
+    studentid?: string;
+    role?: Role;
+    channel?: number;
+    refresh?: string;
+  };
+}) {
+  const update_user = await prisma.user.update({
+    where: {
+      email: user.email,
+    },
+    data: user.data,
+  });
+  return update_user;
 }

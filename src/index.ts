@@ -1,12 +1,15 @@
 import express from 'express';
-const path = require('path');
-const session = require('express-session');
 import "dotenv/config";
+import { jwtValidate } from '../middleware/jwt.middleware';
+import cookie from 'cookie-parser';
+import session from 'express-session';
+
+const path = require('path');
 const cors = require('cors');
+const passport = require('passport');
 
 const userRouter = require('./routes/user.route');
 const authRouter = require('./routes/auth.route');
-
 
 const port = parseInt(process.env.PORT!) || 7777 ;
 const app = express();
@@ -15,7 +18,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-app.use("/users",userRouter);
+app.use(cookie());
+
+app.use("/users",jwtValidate,userRouter);
 app.use("/login",authRouter);
 
 app.listen(port,function () {

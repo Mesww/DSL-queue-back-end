@@ -1,24 +1,25 @@
-generator clinet{
-    provider = "prisma-client-js"
+generator clinet {
+  provider = "prisma-client-js"
 }
-datasource db{
-    provider =  "mysql"
-    url = env("DATABASE_URL")
-    shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  studentid String @unique
-  name String
-  role    Role
-  channel Int
-  emailVerified Boolean?
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  studentid String  @unique
+  name      String
+  role      Role
+  channel   Int
+  refresh   String? @db.VarChar(1046)
 }
 
-enum Role{
-   STUDENT
+enum Role {
+  STUDENT
   TEACHER
   ADMIN
 }

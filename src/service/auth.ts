@@ -9,6 +9,7 @@ export async function auth(code: string) {
     redirect_uri: "postmessage",
     grant_type: "authorization_code",
   });
+  
   const accessToken = response.data.access_token;
   console.log("Access Token:", accessToken);
 
@@ -21,6 +22,7 @@ export async function auth(code: string) {
       },
     }
   );
+  
   const userDetails = userResponse.data;
   console.log("User Details:", userDetails);
 
