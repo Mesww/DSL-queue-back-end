@@ -21,7 +21,7 @@ model User {
 
 model Queue {
   queueid        Int      @id @default(autoincrement())
-  datetime  DateTime @default(now())
+  datetime  DateTime      @default(now()) @db.DateTime(1)
   studentID   String      @unique
   type      QueueType
   orders     Int 
@@ -57,6 +57,7 @@ enum QueueStatus {
   SKIP
   STOP
 }
+
 
 model History {
   historyid        Int      @id @default(autoincrement())

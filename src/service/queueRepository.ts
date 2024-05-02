@@ -7,14 +7,30 @@ export async function getAllqueues() {
     return await prisma.queue.findMany();
 }
 
-export async function getSpecific(queue:{queueid?:number, studentID?:string}) {
-  const res = await prisma.queue.findUnique({
-    where:{
-      studentID:queue.studentID,
-      queueid:queue.queueid
-    }
-  })
-  return res;
+export async function getSpecific(queue:{queueid?:number, studentID?:string,channel?:number,status?:QueueStatus}) {
+  let res = [];
+  if (Number.isNaN(queue.queueid) && queue.studentID === undefined ) {
+    console.log(queue.channel);
+    res = await prisma.queue.findMany({
+      where:{
+        channel:queue.channel,
+        status:queue.status
+      }
+    })
+  }else if(Number.isNaN(queue.queueid) === false){
+    res.push(await prisma.queue.findUnique({
+      where:{
+        queueid:queue.queueid,
+      }
+    }))
+  }else{
+     res.push(await prisma.queue.findUnique({
+      where:{
+       studentID:queue.studentID
+      }
+    }))
+  }
+return res;
 }
 
 
@@ -38,6 +54,7 @@ export async function getSpecificstatusrefuse(queue:{status1:QueueStatus,status2
 export async function addQueue(queue:{studentID:string,type:QueueType}) {
    const res = await prisma.queue.create({data:{
     studentID:queue.studentID,
+    datetime:new Date(),
     type:queue.type,
     channel:0,
     orders:0,
@@ -86,11 +103,12 @@ export async function updateQueuechannel(queue:{queueid:number,channel:number}) 
 }
 
 export async function getCountqueuebefore(queue:{queueid:number}) {
+  console.log(queue.queueid);
   try {
     const result = await prisma.queue.count({
       where: {
         status: {
-          not: 'FINISH' // Assuming 'FINISH' means completed
+          notIn:['FINISH','SKIP'] // Assuming 'FINISH' means completed
         },
         queueid: {
           lte: queue.queueid

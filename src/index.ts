@@ -22,6 +22,9 @@ app.use(express.urlencoded({extended:true}));
 
 app.use(cookie());
 
+process.env.TZ = "Asia/Bangkok";
+console.log(new Date().toLocaleString());
+
 // jwtValidate
 app.use("/users",userRouter);
 app.use("/login",authRouter);
