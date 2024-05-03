@@ -4,7 +4,7 @@ import moment from 'moment-timezone';
 
 
 import { $Enums } from '@prisma/client';
-import { getAllqueues,getSpecific,getSpecificstatusrefuse,addQueue,updateQueuestatus,updateAllQueuestatus,updateQueuechannel,getCountqueuebefore,deleteQueue } from '../service/queueRepository';
+import {resetQueueOrder,getAllqueues,getSpecific,getSpecificstatusrefuse,addQueue,updateQueuestatus,updateAllQueuestatus,updateQueuechannel,getCountqueuebefore,deleteQueue } from '../service/queueRepository';
 
 // queueData
 export const queue = asynchandler(async (req:any, res:any) => {
@@ -21,6 +21,10 @@ export const queue = asynchandler(async (req:any, res:any) => {
 export const queueSpecific = asynchandler (async (req:any, res:any) => {
     const { queueid, studentID,channel,status } = req.query;
     const getQueueSpecific = await getSpecific({queueid:parseInt(queueid),studentID:studentID,channel:parseInt(channel),status:status});
+    // console.log(getQueueSpecific.length);
+    if (getQueueSpecific.length <= 1 && getQueueSpecific[0] === null) {
+        return res.status(200).send(null)
+    }
     getQueueSpecific.forEach((item: any) => {
         item.datetime = moment(item.datetime).tz('Asia/Bangkok').format();
     });
@@ -42,6 +46,11 @@ export const queueaddQueue = asynchandler(async (req:any, res:any) => {
     const {studentID,type} = req.body;
     const getqueueaddQueue = await addQueue({studentID:studentID,type:type});
     res.status(200).send(getqueueaddQueue)
+})
+
+export const resetQueue = asynchandler(async (req:any,res:any) => {
+    await resetQueueOrder();
+    return res.status(200).send({message:"Reset completed!"})
 })
 
 // queueUpdatestatus.put
