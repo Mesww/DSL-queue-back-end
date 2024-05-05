@@ -56,6 +56,7 @@ enum QueueStatus {
   FINISH
   SKIP
   STOP
+  CANCEL
 }
 
 
@@ -63,9 +64,12 @@ model History {
   historyid        Int      @id @default(autoincrement())
   datetime  DateTime @default(now())
   studentid    String 
+  queueid Int
   type      QueueType
   orders     Int
   channel   Int
   rate      Int
+  status    QueueStatus
   comment   String
+
 }

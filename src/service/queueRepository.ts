@@ -53,12 +53,13 @@ export async function getSpecific(queue: {
 export async function getSpecificstatusrefuse(queue: {
   status1: QueueStatus;
   status2?: QueueStatus;
+  status3?: QueueStatus;
 }) {
   const res = await prisma.queue.findMany({
     where: {
       NOT: {
         // !finde rows are not including queue.status1 or queue.status2
-        OR: [{ status: queue.status1 }, { status: queue.status2 }],
+        OR: [{ status: queue.status1 }, { status: queue.status2 },{status:queue.status3}],
       },
     },
   });

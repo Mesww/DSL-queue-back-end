@@ -52,10 +52,56 @@ export const googleauth = asynchandler(
     if (user !== null) {
       // ! gen token
       const token = await genToken({ email: user.email, role: user.role });
+      if (user.role === "TEACHER") {
+        if (user.name === "") {
+          const editTeacher = await editSpecificuser({
+            email: user.email,
+            data: {
+              name: user.name,
+              refresh: token.refresh_token,
+            },
+          });
+        }
+      } else {
+        // ! send refresh token to database
+        const refresh_token_user = await editSpecificuser({
+          email: user.email,
+          data: { refresh: token.refresh_token },
+        });
+
+        if (refresh_token_user === null) {
+          return res.status(500).json({ message: "Database error" });
+        }
+        res.cookie("accesstoken", token.access_token, { HttpOnly: true });
+        res.cookie("refeshtoken", token.refresh_token, { HttpOnly: true });
+      }
+      // ! send accesstoken && refreshtoken to client
+      return res.status(200).json(token);
+    }
+
+    // ! if database hasn't current user
+    // ? --------------------------------- test login admin ---------------------------------
+
+    if (userDetails.email === "6431501102@lamduan.mfu.ac.th") {
+      // !random studentid for admin
+      const studentid = await randomstudentid("0", userDetails.email);
+      console.log(studentid);
+
+      // ! create user
+      const { email, role } = await addUser({
+        studentid: studentid,
+        email: userDetails.email,
+        name: userDetails.name,
+        role: "ADMIN",
+        channel: 0,
+      });
+
+      // ! gen token
+      const token = await genToken({ email: email, role: role });
 
       // ! send refresh token to database
       const refresh_token_user = await editSpecificuser({
-        email: user.email,
+        email: email,
         data: { refresh: token.refresh_token },
       });
 
@@ -68,153 +114,37 @@ export const googleauth = asynchandler(
 
       // ! send accesstoken && refreshtoken to client
       return res.status(200).json(token);
-    }
 
+      // ? --------------------------------- end test login admin ---------------------------------
+    } else {
 
-    // ! if database hasn't current user
-    switch (userDetails.hd) {
-      case "lamduan.mfu.ac.th":
-        
-      // ? --------------------------------- test login admin ---------------------------------
+      // ! create user
+      const { email, role } = await addUser({
+        studentid: isNaN(userDetails.email.split("@")[0])? randomstudentid('0',userDetails.email):userDetails.email.split("@")[0],
+        email: userDetails.email,
+        name: userDetails.name,
+        role: "STUDENT",
+        channel: 0,
+      });
 
-        if (userDetails.email === "6431501102@lamduan.mfu.ac.th") {
-          // !random studentid for admin
-          const studentid = await randomstudentid("0", userDetails.email);
-          console.log(studentid);
+      // ! gen token
+      const token = await genToken({ email: email, role: role });
 
-          // ! create user
-          const { email, role } = await addUser({
-            studentid: studentid,
-            email: userDetails.email,
-            name: userDetails.name,
-            role: "ADMIN",
-            channel: 0,
-          });
+      // ! send refresh token to database
+      const refresh_token_user = await editSpecificuser({
+        email: email,
+        data: { refresh: token.refresh_token },
+      });
 
-          // ! gen token
-          const token = await genToken({ email: email, role: role });
+      if (refresh_token_user === null) {
+        return res.status(500).json({ message: "Database error" });
+      }
 
-          // ! send refresh token to database
-          const refresh_token_user = await editSpecificuser({
-            email: email,
-            data: { refresh: token.refresh_token },
-          });
+      res.cookie("accesstoken", token.access_token, { HttpOnly: true });
+      res.cookie("refeshtoken", token.refresh_token, { HttpOnly: true });
 
-          if (refresh_token_user === null) {
-            return res.status(500).json({ message: "Database error" });
-          }
-
-          res.cookie("accesstoken", token.access_token, { HttpOnly: true });
-          res.cookie("refeshtoken", token.refresh_token, { HttpOnly: true });
-          
-          // ! send accesstoken && refreshtoken to client
-          return res.status(200).json(token);
-
-          // ? --------------------------------- end test login admin ---------------------------------
-
-        }else if(userDetails.email === "6431501016@lamduan.mfu.ac.th"){
-
-          // ? --------------------------------- test regis admin ---------------------------------
-
-          // !random studentid for teacher
-          const studentid = await randomstudentid("0", userDetails.email);
-          console.log(studentid);
-
-          // ! create user
-          const { email, role } = await addUser({
-            studentid: studentid,
-            email: userDetails.email,
-            name: userDetails.name,
-            role: "TEACHER",
-            channel: 0,
-          });
-
-          // ! gen token
-          const token = await genToken({ email: email, role: role });
-
-          // ! send refresh token to database
-          const refresh_token_user = await editSpecificuser({
-            email: email,
-            data: { refresh: token.refresh_token },
-          });
-
-          if (refresh_token_user === null) {
-            return res.status(500).json({ message: "Database error" });
-          }
-
-          res.cookie("accesstoken", token.access_token, { HttpOnly: true });
-          res.cookie("refeshtoken", token.refresh_token, { HttpOnly: true });
-          
-          // ! send accesstoken && refreshtoken to client
-          return res.status(200).json(token);
-
-          
-          // ? --------------------------------- end test regis admin ---------------------------------
-          
-
-        } else {
-          // ! create user
-          const { email, role } = await addUser({
-            studentid: userDetails.email.split("@")[0],
-            email: userDetails.email,
-            name: userDetails.name,
-            role: "STUDENT",
-            channel: 0,
-          });
-          // ! gen token
-          const token = await genToken({ email: email, role: role });
-
-          // ! send refresh token to database
-          const refresh_token_user = await editSpecificuser({
-            email: email,
-            data: { refresh: token.refresh_token },
-          });
-
-          if (refresh_token_user === null) {
-            return res.status(500).json({ message: "Database error" });
-          }
-
-          res.cookie("accesstoken", token.access_token, { HttpOnly: true });
-          res.cookie("refeshtoken", token.refresh_token, { HttpOnly: true });
-
-          // ! send accesstoken && refreshtoken to client
-          return res.status(200).json(token);
-        }
-      default:
-        if (userDetails.email === "khumnoiw@gmail.com") {
-          // !random studentid for admin
-          const studentid = await randomstudentid("0", userDetails.email);
-          console.log(studentid);
-
-          // ! create user
-          const { email, role } = await addUser({
-            studentid: studentid,
-            email: userDetails.email,
-            name: userDetails.name,
-            role: "ADMIN",
-            channel: 0,
-          });
-
-          // ! gen token
-          const token = await genToken({ email: email, role: role });
-
-          // ! send refresh token to database
-          const refresh_token_user = await editSpecificuser({
-            email: email,
-            data: { refresh: token.refresh_token },
-          });
-
-          if (refresh_token_user === null) {
-            return res.status(500).json({ message: "Database error" });
-          }
-
-          res.cookie("accesstoken", token.access_token, { HttpOnly: true });
-          res.cookie("refeshtoken", token.refresh_token, { HttpOnly: true });
-
-          // ! send accesstoken && refreshtoken to client
-          return res.status(200).json(token);
-        }
-        break;
+      // ! send accesstoken && refreshtoken to client
+      return res.status(200).json(token);
     }
   }
 );

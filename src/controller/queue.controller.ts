@@ -33,8 +33,8 @@ export const queueSpecific = asynchandler (async (req:any, res:any) => {
 
 // queueDataspecificstatusrefuse.get
 export const queueSpecificstatusrefuse = asynchandler(async (req:any,res:any) => {
-    const {status1,status2} = req.query;
-    const getQueueSpecificstatusrefuse = await getSpecificstatusrefuse({status1:status1,status2:status2});
+    const {status1,status2,status3} = req.query;
+    const getQueueSpecificstatusrefuse = await getSpecificstatusrefuse({status1:status1,status2:status2,status3:status3});
     getQueueSpecificstatusrefuse.forEach((item: any) => {
         item.datetime = moment(item.datetime).tz('Asia/Bangkok').format();
     });
