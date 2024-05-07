@@ -1,4 +1,4 @@
-import prisma from "../../prisma/client";
+import prisma from "../prisma/client";
 import { Role, User } from "@prisma/client";
 export async function getUser() {
   return await prisma.user.findMany();

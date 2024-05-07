@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client/extension";
-import prisma from "../../prisma/client";
+import prisma from "../prisma/client";
 import { Role, QueueType, QueueStatus } from "@prisma/client";
 
 let reset = false;

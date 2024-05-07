@@ -1,6 +1,6 @@
 import express from 'express';
 import "dotenv/config";
-import { jwtValidate } from '../middleware/jwt.middleware';
+import { jwtValidate } from './middleware/jwt.middleware';
 import cookie from 'cookie-parser';
 import session from 'express-session';
 import {resetQueueOrder} from './service/queueRepository';
