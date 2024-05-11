@@ -29,7 +29,7 @@
   "build": "tsc",
   "scripts": {
     "start": "node lib/",
-    "build": "shx rm -rf lib/ && tsc"	,
+    "build": "tsc"	,
     "dev": "nodemon ./src/index.ts"
     
   },

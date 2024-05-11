@@ -1,28 +1,31 @@
-FROM node:21.7.3 as builder
+# Use an official Node.js runtime as a parent image
+FROM node:21.7.3
 
+# RUN apt-get update && apt-get install -y mysql
 
-WORKDIR /home/node
+# Set the working directory in the container
+WORKDIR /usr/src/app
 
-COPY package.json .
-RUN npm install 
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
 
-COPY . .
-
-RUN npm run build
-
-
-FROM node:21.7.3 
-
-WORKDIR /home/node
-
-### Add this:
-RUN npx prisma generate 
-COPY --from=builder /home/node/lib ./lib
-RUN npm run build
-
-USER node
-COPY package.json .
+# Install dependencies
 RUN npm install
 
+
+# Copy the rest of your application
+COPY . .
+
+RUN npx prisma generate
+# Build TypeScript
+RUN npm run build
+
+
+
+# Expose the port your app runs on
 EXPOSE 8886
-CMD ["npm","run", "start"]
+
+# Command to run your app
+CMD ["node", "dist/index.js"]
+
+
