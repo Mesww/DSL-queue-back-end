@@ -1,6 +1,6 @@
 import express from 'express';
 
-import {resetQueue,queue,queueSpecific,queueSpecificstatusrefuse,queueaddQueue,queueUpdatestatus,queueupdateAllQueuestatus,queueupdateQueuechannel,queueCountqueuebefore,queuedeleteQueue} from '../controller/queue.controller';
+import {resetQueue,queue,queueSpecific,queueSpecificstatusrefuse,queueaddQueue,queueUpdatestatus,queueupdateAllQueuestatus,queueupdateQueuechannel,queueCountqueuebefore,queuedeleteQueue, queueSpecificstatus} from '../controller/queue.controller';
 
 const router = express.Router();
 
@@ -14,6 +14,7 @@ router.put("/getqueueupdateQueuechannel",queueupdateQueuechannel)
 router.get("/getqueueCountqueuebefore",queueCountqueuebefore)
 router.delete("/getqueuedeleteQueue",queuedeleteQueue)
 router.post("/getqueueresetQueue",resetQueue)
+router.get("/getqueueSpecificstatus",queueSpecificstatus)
 
 router.get("/testtime",(req,res)=>{
     const {date} = req.body;

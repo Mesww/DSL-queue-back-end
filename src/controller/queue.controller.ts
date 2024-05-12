@@ -4,7 +4,7 @@ import moment from 'moment-timezone';
 
 
 import { $Enums } from '@prisma/client';
-import {resetQueueOrder,getAllqueues,getSpecific,getSpecificstatusrefuse,addQueue,updateQueuestatus,updateAllQueuestatus,updateQueuechannel,getCountqueuebefore,deleteQueue } from '../service/queueRepository';
+import {resetQueueOrder,getAllqueues,getSpecific,getSpecificstatusrefuse,addQueue,updateQueuestatus,updateAllQueuestatus,updateQueuechannel,getCountqueuebefore,deleteQueue, getSpecificstatus } from '../service/queueRepository';
 
 // queueData
 export const queue = asynchandler(async (req:any, res:any) => {
@@ -29,6 +29,12 @@ export const queueSpecific = asynchandler (async (req:any, res:any) => {
         item.datetime = moment(item.datetime).tz('Asia/Bangkok').format();
     });
     res.status(200).send(getQueueSpecific);
+})
+export const queueSpecificstatus = asynchandler (async (req:any, res:any) => {
+    const {status } = req.query;
+    const getQueueSpecificstatus = await getSpecificstatus({status:status});
+    // console.log(getQueueSpecific.length);
+    res.status(200).send(getQueueSpecificstatus);
 })
 
 // queueDataspecificstatusrefuse.get

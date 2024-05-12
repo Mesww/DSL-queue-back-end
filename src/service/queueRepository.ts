@@ -65,6 +65,16 @@ export async function getSpecificstatusrefuse(queue: {
   });
   return res;
 }
+export async function getSpecificstatus(queue: {
+  status: QueueStatus;
+}) {
+  const res = await prisma.queue.findMany({
+    where: {
+      status :queue.status
+    },
+  });
+  return res;
+}
 export async function addQueue(queue: { studentID: string; type: QueueType }) {
   // Get the current maximum value of the orders column
   let lastOrder: { lastOrder: number }[] = [{
